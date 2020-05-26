@@ -124,7 +124,7 @@ var config =
 	// max number of participant that will be visible in 
 	// as speaker
 	lastN                : 50,
-	mobileLastN          : 50,
+	mobileLastN          : 3,
 	// Highest number of lastN the user can select manually in 
 	// userinteface
 	maxLastN             : 500,
@@ -132,8 +132,8 @@ var config =
 	lockLastN            : false,
 	// Add file and uncomment for adding logo to appbar
 	// logo       : 'images/logo.svg',
-  // title                : 'Multiparty meeting',
-  logo        : 'images/iorestoacasa-logo.svg',
+  	// title                : 'Multiparty meeting',
+  	logo        : 'images/iorestoacasa-logo.svg',
 	title       : 'IoRestoACasa.work',
 	// Service & Support URL
 	// if not set then not displayed on the about modals
