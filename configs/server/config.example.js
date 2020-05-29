@@ -93,7 +93,7 @@ module.exports =
 	backupTurnServers : [
 		{
 			urls : [
-				// inserisci l'URL del tuo server
+				// inserisci l'hostname del tuo server, senza HTTPS://
 				// ad esempio:
 				// 'turn:mm.iorestoacasa.work:3478?transport=tcp'
 				'turn:CHANGEME:3478?transport=tcp'
@@ -108,6 +108,7 @@ module.exports =
 	fileTracker  : 'wss://tracker.lab.vvc.niif.hu:443',
 	redisOptions : {},
 	// session cookie secret
+	// enter a random string here
 	cookieSecret : 'CHANGEME',
 	cookieName   : 'multiparty-meeting.sid',
 	// if you use encrypted private key the set the passphrase
