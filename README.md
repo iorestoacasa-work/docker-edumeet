@@ -83,7 +83,7 @@ cp configs/app/config.example.js configs/app/config.js
 cp configs/server/config.example.js configs/server/config.js
 ```
 
-Modifica i tre file `coturn.conf`, `config/app/config.js`, `config/server/config.js` inserendo valori opportuni al posto dei `CHANGEME`
+Modifica i file `coturn.conf`, `config/server/config.js` inserendo valori opportuni al posto dei `CHANGEME`
 
 ## 7. avvia i container
 
