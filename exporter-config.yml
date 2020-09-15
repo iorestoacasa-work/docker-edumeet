@@ -7,14 +7,14 @@ metrics:
     type: gauge
     executions:
     - type: sh
-      command: docker exec -t mm /opt/multiparty-meeting/server/connect.js --stats | grep 'rooms' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | sed -E 's/rooms:([0-9]+)/\1/g'|sed -e 's/[\r\n]//g'
+      command: docker exec -t edumeet /opt/edumeet/server/connect.js --stats | grep 'rooms' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | sed -E 's/rooms:([0-9]+)/\1/g'|sed -e 's/[\r\n]//g'
       timeout: 5000
   - name: edumeet_peers
     help: The count of peers
     type: gauge
     executions:
       - type: sh
-        command: docker exec -t mm /opt/multiparty-meeting/server/connect.js --stats | grep 'peers' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | sed -E 's/peers:([0-9]+)/\1/g'|sed -e 's/[\r\n]//g'
+        command: docker exec -t edumeet /opt/edumeet/server/connect.js --stats | grep 'peers' | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | sed -E 's/peers:([0-9]+)/\1/g'|sed -e 's/[\r\n]//g'
         timeout: 5000
   - name: edumeet_cpu_usage
     help: CPU usage

@@ -1,8 +1,8 @@
-# MM - IoRestoACasa.work
+# EduMeet - IoRestoACasa.work
 
-Questo repository permette di installare velocemente una nuova istanza di Multiparty-Meeting
+Questo repository permette di installare velocemente una nuova istanza di EduMeet
 
-https://github.com/havfo/multiparty-meeting
+https://github.com/edumeet/edumeet
 
 ## 1. entra nella chat Telegram di supporto
 
@@ -58,7 +58,7 @@ se la procedura ha successo troverai i file necessari in:
 Nota per i certicati Let's Encrypt:
 Ogni 3 mesi l'amministratore del server deve preocuparsi di aggiornare il certificato.
 
-## 4. scarica MM
+## 4. scarica EduMeet
 
 ```
 cd /opt
