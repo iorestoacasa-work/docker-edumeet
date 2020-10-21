@@ -4,7 +4,6 @@ services:
   edumeet:
     build: .
     env_file: .env
-    command: node ${BASEDIR}/${EDUMEET}/server/server.js
     depends_on: 
       - redis
     restart: unless-stopped

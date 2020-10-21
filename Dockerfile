@@ -8,6 +8,12 @@ ARG SERVER_DEBUG=''
 ARG BRANCH=master
 ARG REACT_APP_DEBUG=''
 
+# Env
+ENV DEBUG ${SERVER_DEBUG}
+ENV NODE_ENV ${NODE_ENV}
+ENV REACT_APP_DEBUG=${REACT_APP_DEBUG}
+
+# Install system dep
 RUN apt update && apt install -y git bash build-essential python
 
 # Checkout code
@@ -22,14 +28,9 @@ RUN npm install logstash-client
 WORKDIR ${BASEDIR}/${EDUMEET}/app
 RUN npm install
 
-# Set app in producion mode/minified/.
-ENV NODE_ENV ${NODE_ENV}
-
 # Workaround for the next npm run build => rm -rf public dir even if it does not exists.
 # TODO: Fix it smarter
 RUN mkdir -p ${BASEDIR}/${EDUMEET}/server/public
-
-ENV REACT_APP_DEBUG=${REACT_APP_DEBUG}
 
 # Build client side app
 RUN npm run build
@@ -37,6 +38,6 @@ RUN npm run build
 # Run server
 EXPOSE 80 443 
 EXPOSE 40000-49999/udp
-ENV DEBUG ${SERVER_DEBUG}
+
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
