@@ -1,5 +1,4 @@
-FROM node:10-slim AS edumeet-builder
-
+FROM node:10-slim
 
 # Args
 ARG BASEDIR=/opt
@@ -9,19 +8,21 @@ ARG SERVER_DEBUG=''
 ARG BRANCH=master
 ARG REACT_APP_DEBUG=''
 
-WORKDIR ${BASEDIR}
+RUN apt update && apt install -y git bash build-essential python
 
-RUN apt-get update;apt-get install -y git bash
+# Checkout code
+RUN git clone --single-branch --branch ${BRANCH} https://github.com/befair/${EDUMEET}.git ${BASEDIR}/${EDUMEET}
 
-#checkout code
-RUN git clone --single-branch --branch ${BRANCH} https://github.com/edumeet/${EDUMEET}.git
+# Install server dep
+WORKDIR ${BASEDIR}/${EDUMEET}/server
+RUN npm install
+RUN npm install logstash-client
 
-#install app dep
+# Install client dep
 WORKDIR ${BASEDIR}/${EDUMEET}/app
-
 RUN npm install
 
-# set app in producion mode/minified/.
+# Set app in producion mode/minified/.
 ENV NODE_ENV ${NODE_ENV}
 
 # Workaround for the next npm run build => rm -rf public dir even if it does not exists.
@@ -30,39 +31,12 @@ RUN mkdir -p ${BASEDIR}/${EDUMEET}/server/public
 
 ENV REACT_APP_DEBUG=${REACT_APP_DEBUG}
 
-# package web app
+# Build client side app
 RUN npm run build
 
-#install server dep
-WORKDIR ${BASEDIR}/${EDUMEET}/server
-
-RUN apt-get install -y git build-essential python
-
-RUN npm install
-RUN npm install logstash-client
-
-FROM node:10-slim
-
-# Args
-ARG BASEDIR=/opt
-ARG EDUMEET=edumeet
-ARG NODE_ENV=production
-ARG SERVER_DEBUG=''
-
-WORKDIR ${BASEDIR}
-
-
-COPY --from=edumeet-builder ${BASEDIR}/${EDUMEET}/server ${BASEDIR}/${EDUMEET}/server
-
-
-
-# Web PORTS
+# Run server
 EXPOSE 80 443 
 EXPOSE 40000-49999/udp
-
-
-## run server 
 ENV DEBUG ${SERVER_DEBUG}
-
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]

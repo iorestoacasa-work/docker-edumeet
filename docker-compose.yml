@@ -2,17 +2,11 @@ version: "3.3"
 
 services:
   edumeet:
+    build: .
     env_file: .env
-    image: edumeet/edumeet:${TAG}
+    command: node ${BASEDIR}/${EDUMEET}/server/server.js
     depends_on: 
       - redis
-    build:
-      args:
-        - BASEDIR=${BASEDIR}
-        - EDUMEET=${EDUMEET}
-        - NODE_ENV=${NODE_ENV}
-        - SERVER_DEBUG=${SERVER_DEBUG}
-      context: ./
     restart: unless-stopped
     volumes:
       - ./configs/server:${BASEDIR}/${EDUMEET}/server/config
