@@ -47,8 +47,11 @@ const {
 
 module.exports =
 {
-
 	// Auth conf
+  
+  // First user to join room will have moderator privileges
+  modOnCreate : false,
+
 	/*
 	auth :
 	{
