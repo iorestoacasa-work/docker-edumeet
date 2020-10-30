@@ -2,7 +2,7 @@
 
 Questo repository permette di installare velocemente una nuova istanza di EduMeet
 
-https://github.com/edumeet/edumeet
+https://github.com/befair/edumeet
 
 ## 1. entra nella chat Telegram di supporto
 
@@ -62,8 +62,8 @@ Ogni 3 mesi l'amministratore del server deve preocuparsi di aggiornare il certif
 
 ```
 cd /opt
-git clone https://github.com/iorestoacasa-work/mm.git
-cd mm
+git clone https://github.com/iorestoacasa-work/docker-edumeet.git
+cd docker-edumeet
 ```
 
 ## 5. copia il certificato SSL in /certs
