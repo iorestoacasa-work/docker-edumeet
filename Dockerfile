@@ -5,7 +5,7 @@ ARG BASEDIR=/opt
 ARG EDUMEET=edumeet
 ARG NODE_ENV=production
 ARG SERVER_DEBUG=''
-ARG BRANCH=feat-less-controls
+ARG BRANCH=befair-changes
 ARG REACT_APP_DEBUG=''
 
 # Env
