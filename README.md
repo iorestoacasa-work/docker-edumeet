@@ -48,6 +48,7 @@ certbot certonly -d miodominio.com --standalone
 ```
 assicurati che il tuo dominio risolva correttamente all'indirizzo IP del tuo server prima di lanciare questo comando, altrimenti la generazione del certificato fallirà.
 
+<<<<<<< HEAD
 se la procedura ha successo troverai i file necessari in:
 ```
 # certificato (pubblico)
@@ -107,7 +108,6 @@ collegandoti con il browser all'hostname scelto e facendo una videochiamata
 ## 11. apri una issue con le informazioni del server
 
 partendo [da questo template](https://github.com/iorestoacasa-work/iorestoacasa.work/issues/new?assignees=Radeox%2C+tapionx&labels=new+server&template=aggiunta-nuovo-server.md&title=%5BNEW+SERVER%5D)
-
 aggiungeremo prima possibile il tuo server alla tabella sul sito https://iorestoacasa.work.
 
 Di solito ci dedichiamo a questa attività mezz'ora dopo pranzo.

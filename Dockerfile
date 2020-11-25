@@ -2,13 +2,14 @@ FROM node:10-slim
 
 # Args
 ARG BASEDIR=/opt
+ARG REPO=befair
 ARG EDUMEET=edumeet
+ARG BRANCH=master
+
 ARG NODE_ENV=production
 ARG SERVER_DEBUG=''
-ARG BRANCH=master
 ARG REACT_APP_DEBUG=''
 
-# Env
 ENV DEBUG ${SERVER_DEBUG}
 ENV NODE_ENV ${NODE_ENV}
 ENV REACT_APP_DEBUG=${REACT_APP_DEBUG}
@@ -17,7 +18,7 @@ ENV REACT_APP_DEBUG=${REACT_APP_DEBUG}
 RUN apt update && apt install -y git bash build-essential python
 
 # Checkout code
-RUN git clone --single-branch --branch ${BRANCH} https://github.com/befair/${EDUMEET}.git ${BASEDIR}/${EDUMEET}
+RUN git clone --single-branch --branch ${BRANCH} https://github.com/${REPO}/${EDUMEET}.git ${BASEDIR}/${EDUMEET}
 
 # Install server dep
 WORKDIR ${BASEDIR}/${EDUMEET}/server
