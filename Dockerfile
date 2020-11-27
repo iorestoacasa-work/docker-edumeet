@@ -1,11 +1,11 @@
 FROM node:10-slim
 
 # Args
-ARG BASEDIR=/opt
 ARG REPO=befair
 ARG EDUMEET=edumeet
 ARG BRANCH=master
 
+ARG BASEDIR=/opt
 ARG NODE_ENV=production
 ARG SERVER_DEBUG=''
 ARG REACT_APP_DEBUG=''
