@@ -1,28 +1,6 @@
 const os = require('os');
 const ifaces = os.networkInterfaces();
 
-function getListenIps() {
-  let listenIP = [];
-  Object.keys(ifaces).forEach(function (ifname) {
-    var alias = 0;
-
-    ifaces[ifname].forEach(function (iface) {
-      if (
-        (iface.family !== "IPv4" &&
-          (iface.family !== "IPv6" || iface.scopeid !== 0)) ||
-        iface.internal !== false
-      ) {
-        // skip over internal (i.e. 127.0.0.1) and non-ipv4 or ipv6 non global addresses
-        return;
-      }
-      listenIP.push({ ip: iface.address, announcedIp: null });
-
-      ++alias;
-    });
-  });
-  return listenIP;
-}
-
 const userRoles = require('../userRoles');
 
 const {
@@ -109,7 +87,7 @@ module.exports =
 		}
 	],
 	fileTracker  : 'wss://tracker.lab.vvc.niif.hu:443',
-	redisOptions : {},
+  redisOptions : {password: 'CHANGEME'},
 	// session cookie secret
 	// enter a random string here
 	cookieSecret : 'CHANGEME',
@@ -420,3 +398,21 @@ module.exports =
 		// quiet: true // include fewer labels
 	// }
 };
+
+function getListenIps() {
+  let listenIP = [];
+  Object.keys(ifaces).forEach(function (ifname) {
+    var alias = 0;
+
+    ifaces[ifname].forEach(function (iface) {
+      if (iface.family !== "IPv4" && (iface.family !== "IPv6" || iface.scopeid !== 0)) {
+        // skip over non-ipv4 or ipv6 non global addresses
+        return;
+      }
+
+      listenIP.push({ ip: iface.address, announcedIp: null });
+      ++alias;
+    });
+  });
+  return listenIP;
+}
