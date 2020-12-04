@@ -1,5 +1,5 @@
 const os = require('os');
-const ifaces = os.networkInterfaces();
+// const fs = require('fs');
 
 const userRoles = require('../userRoles');
 
@@ -11,8 +11,11 @@ const {
 const {
 	CHANGE_ROOM_LOCK,
 	PROMOTE_PEER,
+	MODIFY_ROLE,
 	SEND_CHAT,
 	MODERATE_CHAT,
+	SHARE_AUDIO,
+	SHARE_VIDEO,
 	SHARE_SCREEN,
 	EXTRA_VIDEO,
 	SHARE_FILE,
@@ -25,39 +28,81 @@ const {
 
 module.exports =
 {
-	// Auth conf
-  
-  // First user to join room will have moderator privileges
-  modOnCreate : false,
 
+	// Auth conf
 	/*
 	auth :
 	{
+		// Always enabled if configured
 		lti :
 		{
 			consumerKey    : 'key',
 			consumerSecret : 'secret'
 		},
-		oidc:
+
+		// Auth strategy to use (default oidc)
+		strategy : 'oidc',
+		oidc :
 		{
 			// The issuer URL for OpenID Connect discovery
 			// The OpenID Provider Configuration Document
 			// could be discovered on:
 			// issuerURL + '/.well-known/openid-configuration'
 
+			// e.g. google OIDC config
+			// Follow this guide to get credential:  
+			// https://developers.google.com/identity/protocols/oauth2/openid-connect
+			// use this issuerURL
+			// issuerURL     : 'https://accounts.google.com/',
+			
 			issuerURL     : 'https://example.com',
 			clientOptions :
 			{
 				client_id     : '',
 				client_secret : '',
 				scope       		: 'openid email profile',
-				// where client.example.com is your multiparty meeting server
+				// where client.example.com is your edumeet server
 				redirect_uri  : 'https://client.example.com/auth/callback'
 			}
 
+		},
+		saml :
+		{
+			// where edumeet.example.com is your edumeet server
+			callbackUrl    : 'https://edumeet.example.com/auth/callback',
+			issuer         : 'https://edumeet.example.com',
+			entryPoint     : 'https://openidp.feide.no/simplesaml/saml2/idp/SSOService.php',
+			privateCert    : fs.readFileSync('config/saml_privkey.pem', 'utf-8'),
+			signingCert    : fs.readFileSync('config/saml_cert.pem', 'utf-8'),
+			decryptionPvk  : fs.readFileSync('config/saml_privkey.pem', 'utf-8'),
+			decryptionCert : fs.readFileSync('config/saml_cert.pem', 'utf-8'),
+			// Federation cert
+			cert           : fs.readFileSync('config/federation_cert.pem', 'utf-8')
+		},
+
+		// to create password hash use: node server/utils/password_encode.js cleartextpassword
+		local :
+		{
+			users : [
+				{
+					id           : 1,
+					username     : 'alice',
+					passwordHash : '$2b$10$PAXXw.6cL3zJLd7ZX.AnL.sFg2nxjQPDmMmGSOQYIJSa0TrZ9azG6',
+					displayName  : 'Alice',
+					emails       : [ { value: 'alice@atlanta.com' } ]
+				},
+				{
+					id           : 2,
+					username     : 'bob',
+					passwordHash : '$2b$10$BzAkXcZ54JxhHTqCQcFn8.H6klY/G48t4jDBeTE2d2lZJk/.tvv0G',
+					displayName  : 'Bob',
+					emails       : [ { value: 'bob@biloxi.com' } ]
+				}
+			]
 		}
 	},
 	*/
+
 	// URI and key for requesting geoip-based TURN server closest to the client
 	/*
 	turnAPIKey    : 'examplekey',
@@ -68,38 +113,41 @@ module.exports =
 		'ip_ver'    		: 'ipv4',
 		'servercount'	: '2'
 	},
+	turnAPITimeout    : 2 * 1000,
 	*/
-
 	// Backup turnservers if REST fails or is not configured
 	backupTurnServers : [
 		{
 			urls : [
-				// inserisci l'hostname del tuo server, senza HTTPS://
-				// ad esempio:
-				// 'turn:mm.iorestoacasa.work:3478?transport=tcp'
+				// Inserisci l'hostname del tuo server, senza HTTPS://
+				// ad esempio: 'turn:mm.iorestoacasa.work:3478?transport=tcp'
 				'turn:CHANGEME:3478?transport=tcp'
 			],
-			// username e password che specifichi qui
-			// dovranno essere gli stessi che inserisci
-			// in coturn.conf
+			// Username e password che specifichi qui dovranno
+			// essere gli stessi che inserisci in coturn.conf
 			username   : 'CHANGEME',
 			credential : 'CHANGEME'
 		}
 	],
+	// Bittorrent tracker
 	fileTracker  : 'wss://tracker.lab.vvc.niif.hu:443',
-  redisOptions : {password: 'CHANGEME'},
-	// session cookie secret
-	// enter a random string here
+
+	// Redis server options
+	redisOptions : {password: 'CHANGEME'},
+
+	// Session cookie secret
 	cookieSecret : 'CHANGEME',
-	cookieName   : 'multiparty-meeting.sid',
-	// if you use encrypted private key the set the passphrase
+	cookieName   : 'edumeet.sid',
+
+	// If you use encrypted private key the set the passphrase
 	tls          :
 	{
-		cert: `${__dirname}/../certs/fullchain.pem`,
+		cert : `${__dirname}/../certs/fullchain.pem`,
 		// passphrase: 'key_password'
-		key: `${__dirname}/../certs/privkey.pem`
+		key  : `${__dirname}/../certs/privkey.pem`
 	},
-	// listening Host or IP 
+
+	// Listening Host or IP 
 	// If omitted listens on every IP. ("0.0.0.0" and "::")
 	// listeningHost: 'localhost',
 	// Listening port for https server.
@@ -156,7 +204,7 @@ module.exports =
 	// Examples:
 	/*
 	// All authenicated users will be MODERATOR and AUTHENTICATED
-	userMapping : async ({ peer, roomId, userinfo }) =>
+	userMapping : async ({ peer, room, roomId, userinfo }) =>
 	{
 		peer.addRole(userRoles.MODERATOR);
 		peer.addRole(userRoles.AUTHENTICATED);
@@ -164,7 +212,7 @@ module.exports =
 	// All authenicated users will be AUTHENTICATED,
 	// and those with the moderator role set in the userinfo
 	// will also be MODERATOR
-	userMapping : async ({ peer, roomId, userinfo }) =>
+	userMapping : async ({ peer, room, roomId, userinfo }) =>
 	{
 		if (
 			Array.isArray(userinfo.meet_roles) &&
@@ -184,10 +232,27 @@ module.exports =
 
 		peer.addRole(userRoles.AUTHENTICATED);
 	},
+	// First authenticated user will be moderator,
+	// all others will be AUTHENTICATED
+	userMapping : async ({ peer, room, roomId, userinfo }) =>
+	{
+		if (room)
+		{
+			const peers = room.getJoinedPeers();
+
+			if (peers.some((_peer) => _peer.authenticated))
+				peer.addRole(userRoles.AUTHENTICATED);
+			else
+			{
+				peer.addRole(userRoles.MODERATOR);
+				peer.addRole(userRoles.AUTHENTICATED);
+			}
+		}
+	},
 	// All authenicated users will be AUTHENTICATED,
 	// and those with email ending with @example.com
 	// will also be MODERATOR
-	userMapping : async ({ peer, roomId, userinfo }) =>
+	userMapping : async ({ peer, room, roomId, userinfo }) =>
 	{
 		if (userinfo.email && userinfo.email.endsWith('@example.com'))
 		{
@@ -195,11 +260,11 @@ module.exports =
 		}
 
 		peer.addRole(userRoles.AUTHENTICATED);
-	}
+	},
 	// All authenicated users will be AUTHENTICATED,
 	// and those with email ending with @example.com
 	// will also be MODERATOR
-	userMapping : async ({ peer, roomId, userinfo }) =>
+	userMapping : async ({ peer, room, roomId, userinfo }) =>
 	{
 		if (userinfo.email && userinfo.email.endsWith('@example.com'))
 		{
@@ -210,7 +275,7 @@ module.exports =
 	},
 	*/
 	// eslint-disable-next-line no-unused-vars
-	userMapping           : async ({ peer, roomId, userinfo }) =>
+	userMapping           : async ({ peer, room, roomId, userinfo }) =>
 	{
 		if (userinfo.picture != null)
 		{
@@ -223,6 +288,10 @@ module.exports =
 				peer.picture = userinfo.picture;
 			}
 		}
+		if (userinfo['urn:oid:0.9.2342.19200300.100.1.60'] != null)
+		{
+			peer.picture = `data:image/jpeg;base64, ${userinfo['urn:oid:0.9.2342.19200300.100.1.60']}`;
+		}
 
 		if (userinfo.nickname != null)
 		{
@@ -232,6 +301,16 @@ module.exports =
 		if (userinfo.name != null)
 		{
 			peer.displayName = userinfo.name;
+		}
+
+		if (userinfo.displayName != null)
+		{
+			peer.displayName = userinfo.displayName;
+		}
+
+		if (userinfo['urn:oid:2.16.840.1.113730.3.1.241'] != null)
+		{
+			peer.displayName = userinfo['urn:oid:2.16.840.1.113730.3.1.241'];
 		}
 
 		if (userinfo.email != null)
@@ -261,10 +340,16 @@ module.exports =
 		[CHANGE_ROOM_LOCK] : [ userRoles.MODERATOR ],
 		// The role(s) have permission to promote a peer from the lobby
 		[PROMOTE_PEER]     : [ userRoles.NORMAL ],
+		// The role(s) have permission to give/remove other peers roles
+		[MODIFY_ROLE]      : [ userRoles.NORMAL ],
 		// The role(s) have permission to send chat messages
 		[SEND_CHAT]        : [ userRoles.NORMAL ],
 		// The role(s) have permission to moderate chat
 		[MODERATE_CHAT]    : [ userRoles.MODERATOR ],
+		// The role(s) have permission to share audio
+		[SHARE_AUDIO]      : [ userRoles.NORMAL ],
+		// The role(s) have permission to share video
+		[SHARE_VIDEO]      : [ userRoles.NORMAL ],
 		// The role(s) have permission to share screen
 		[SHARE_SCREEN]     : [ userRoles.NORMAL ],
 		// The role(s) have permission to produce extra video
@@ -375,29 +460,36 @@ module.exports =
 		webRtcTransport :
 		{
 			listenIps: getListenIps(),
-			// listenIps :
-			// [
+			/*
+			listenIps :
+			[
 				// change 192.0.2.1 IPv4 to your server's IPv4 address!!
-				// { ip: '192.0.2.1', announcedIp: null }
+				{ ip: '192.0.2.1', announcedIp: null }
 
 				// Can have multiple listening interfaces
 				// change 2001:DB8::1 IPv6 to your server's IPv6 address!!
 				// { ip: '2001:DB8::1', announcedIp: null }
-			// ],
+			],
+			*/
 			initialAvailableOutgoingBitrate : 1000000,
 			minimumAvailableOutgoingBitrate : 600000,
 			// Additional options that are not part of WebRtcTransportOptions.
 			maxIncomingBitrate              : 1500000
 		}
 	}
-	// Prometheus exporter
-	// prometheus: {
-		// deidentify: true, // deidentify IP addresses
-		// numeric: false, // show numeric IP addresses
-		// port: 8081, // allocated port
-		// quiet: true // include fewer labels
-	// }
 };
+
+	/*
+	,
+	// Prometheus exporter
+	prometheus : {
+		deidentify : false, // deidentify IP addresses
+		// listen     : 'localhost', // exporter listens on this address
+		numeric    : false, // show numeric IP addresses
+		port       : 8889, // allocated port
+		quiet      : false // include fewer labels
+	}
+	*/
 
 function getListenIps() {
   let listenIP = [];
