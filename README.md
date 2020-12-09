@@ -1,113 +1,137 @@
-# EduMeet - IoRestoACasa.work
+# EduMeet - IoRestoACasa.work #
 
-Questo repository permette di installare velocemente una nuova istanza di EduMeet
+Questo repository permette di installare velocemente una nuova istanza di EduMeet ma con il branding iorestoacasa ed eventuali nostre modifiche:
 
-https://github.com/edumeet/edumeet
+<https://github.com/edumeet/edumeet>
 
-## 1. entra nella chat Telegram di supporto
+## 0. Entra nella chat Telegram di supporto ##
 
-e comunicaci la tua intenzione di creare un server
+Se hai bisogno di una mano durante l'installazione non esitare a scrive su:
 
-https://t.me/iorestoacasawork
+<https://t.me/iorestoacasawork>
 
-ti faremo alcune domande e ti aiuteremo durante la procedura di installazione.
+Sicuramente qualcuno ti saprà dare una mano!
 
-## 2. procurati un server
-Puoi usare qualsiasi distribuzione GNU/Linux, avrai bisogno di installare solo `docker`, `docker-compose` e `git`.
+## 2. Procurati un server ##
 
-Per installare Docker, ti consiglio di seguire la guida ufficiale:
-
-https://docs.docker.com/install/
-
-Per installare Docker Compose, allo stesso modo, attieniti alla guida ufficiale:
-
-https://docs.docker.com/compose/install/
+### 2.0 Requisiti minimi ###
 
 Per garantire un servizio migliore abbiamo stabilito i seguenti requisiti minimi:
 
-• una macchina dedicata allo scopo, non condivisa con altri servizi.
+* Macchina dedicata allo scopo, non condivisa con altri servizi.
 * IPv4 statico (possibilmente in un datacenter italiano)
-* connessione 100 Mbps simmetrica (meglio 1 Gbps, ogni utente occupa circa 4 Mbps)
-* 4 CPU server grade (Xeon o analogo)
-* 4GB di RAM
+* Connessione 100 Mbps simmetrica (meglio 1 Gbps, ogni utente occupa circa 4 Mbps)
+* CPU con almeno 4 core (server grade - Xeon o analogo)
+* Almeno 4GB di RAM
 
 Server posizionati in datacenter italiani riducono latenza e congestione di rete.
 
 Naturalmente un server più grande riuscirà ad ospitare più utenti!
 
-## 3. ottieni un certificato SSL
+### 2.1 Sistema operativo ###
 
-Devi pubblicare MM con HTTPS, quindi dovrai ottenere un certificato SSL valido.
+Puoi usare qualsiasi distribuzione GNU/Linux, avrai bisogno di installare solo `docker`, `docker-compose` e `git`.
+
+### 2.2 Installare Docker ###
+
+Per installare Docker, ti consiglio di seguire la guida ufficiale:
+
+<https://docs.docker.com/install/>
+
+Per installare Docker Compose, allo stesso modo, attieniti alla guida ufficiale:
+
+<https://docs.docker.com/compose/install/>
+
+## 3. Ottieni un certificato SSL ##
+
+EduMeet funziona solamente in HTTPS, quindi dovrai ottenere un certificato SSL valido.
 
 Puoi utilizzare [Let's Encrypt](https://letsencrypt.org) che fornisce certificati gratuiti o un una certification authority a tua scelta.
 
-Se vuoi usare certbot:
+## 3.1 Let's encrypt ###
+
+Se vuoi usare `Let's encrypt` dovrai usare il comando `certbot`:
+
+```bash
+# apt install certbot
+# certbot certonly -d <TUO_DOMINO> --standalone
 ```
-apt install certbot
-certbot certonly -d miodominio.com --standalone
-```
+
 assicurati che il tuo dominio risolva correttamente all'indirizzo IP del tuo server prima di lanciare questo comando, altrimenti la generazione del certificato fallirà.
 
-<<<<<<< HEAD
-se la procedura ha successo troverai i file necessari in:
+Se la procedura ha successo troverai i file necessari in:
+
+```text
+/etc/letsencrypt/live/<TUO_DOMINIO>/fullchain.pem  <-- Certificato (pubblico)
+/etc/letsencrypt/live/<TUO_DOMINIO>/privkey.pem    <-- Chiave private
 ```
-# certificato (pubblico)
-/etc/letsencrypt/live/TUODOMINIO/fullchain.pem
-# chiave privata
-/etc/letsencrypt/live/TUODOMINIO/privkey.pem
-```
-Nota per i certicati Let's Encrypt:
+
+Nota per i certicati `Let's Encrypt`:
 Ogni 3 mesi l'amministratore del server deve preocuparsi di aggiornare il certificato.
 
-## 4. scarica EduMeet
+## 4. Scarica EduMeet ##
 
-```
-cd /opt
-git clone https://github.com/iorestoacasa-work/mm.git
-cd mm
-```
-
-## 5. copia il certificato SSL in /certs
-
-```
-cp /etc/letsencrypt/live/TUODOMINIO/fullchain.pem certs/
-cp /etc/letsencrypt/live/TUODOMINIO/privkey.pem certs/
+```bash
+# cd /opt
+# git clone https://github.com/iorestoacasa-work/docker-edumeet.git
+# cd docker-edumeet
 ```
 
-## 6. modifica i file di configurazione
+## 5. Copia il certificato SSL ##
 
-In questo repository trovi dei file di configurazione di esempio. Dovrai copiarli e modificare tutti i `"CHANGEME"` che trovi nei valori adatti al tuo server.
-
-```
-cp coturn.example.conf coturn.conf
-cp configs/app/config.example.js configs/app/config.js
-cp configs/server/config.example.js configs/server/config.js
+```bash
+# cp /etc/letsencrypt/live/<TUO_DOMINO>/fullchain.pem certs/
+# cp /etc/letsencrypt/live/<TUO_DOMINO>/privkey.pem certs/
 ```
 
-Modifica i file `coturn.conf`, `config/server/config.js` inserendo valori opportuni al posto dei `CHANGEME`
+## 6. Modifica i file di configurazione ##
 
-## 7. avvia i container
+In questo repository trovi dei file di configurazione di esempio. Dovrai copiarli e modificare tutti i `CHANGEME` che trovi nei valori adatti al tuo server.
 
-`docker-compose up -d`
+```bash
+# cp configs/coturn/coturn.example.conf configs/coturn/coturn.conf
+# cp configs/redis/redis.example.conf configs/redis/redis.conf
+# cp configs/app/config.example.js configs/app/config.js
+# cp configs/server/config.example.js configs/server/config.js
+```
 
-## 8. Non dimenticare il Firewall!
+Una volta copiati e modificati i file puoi usare il comando:
+
+```bash
+# grep -r CHANGEME configs/coturn/coturn.conf configs/redis/redis.conf configs/app/config.js configs/server/config.js
+```
+
+per verificare se è tutto apposto. Se il comando non da nessun output allora hai fatto tutto bene!
+
+## 7. Avvia i container ##
+
+Per lanciare EduMeet usa:
+
+```bash
+# docker-compose up -d
+```
+
+## 8. Non dimenticare il Firewall ##
+
+Queste sono le porte che EduMeet utilizza. Controlla le impostazioni del tuo Firewall in caso di problemi.
+
 * 80 e 443 TCP per WEB
 * 3478 TCP per TURN
 * 8081 TCP per le metriche
 * da 40000 a 49999 UDP/TCP per i media
 
-## 9. verifica che MM stia funzionando
+## 9. Verifica che tutto stia funzionando corretamente ##
 
-collegandoti con il browser all'hostname scelto e facendo una videochiamata
+Collegati con il browser all'hostname scelto e facendo una videochiamata (apri due schede ed entra nella stessa stanza).
 
-## 10. verifica che le metriche siano esposte correttamente
+## 10. Verifica che le metriche siano esposte correttamente ##
 
-`curl http://hostname.scelto.it:8081/metrics`
+Verifica che le metriche stiano funzionando con:
 
+```bash
+# curl http://hostname.scelto.it:8081/metrics
+```
 
-## 11. apri una issue con le informazioni del server
+## 11. Apri una issue con le informazioni del server ##
 
-partendo [da questo template](https://github.com/iorestoacasa-work/iorestoacasa.work/issues/new?assignees=Radeox%2C+tapionx&labels=new+server&template=aggiunta-nuovo-server.md&title=%5BNEW+SERVER%5D)
-aggiungeremo prima possibile il tuo server alla tabella sul sito https://iorestoacasa.work.
-
-Di solito ci dedichiamo a questa attività mezz'ora dopo pranzo.
+Crea una issue partendo [da questo template](https://github.com/iorestoacasa-work/iorestoacasa.work/issues/new?assignees=Radeox%2C+tapionx&labels=new+server&template=aggiunta-nuovo-server.md&title=%5BNEW+SERVER%5D). Aggiungeremo il tuo server il prima possibile alla tabella sul sito <https://iorestoacasa.work>.
