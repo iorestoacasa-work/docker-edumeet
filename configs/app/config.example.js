@@ -157,11 +157,11 @@ var config =
 	lockLastN            : false,
 	// Show logo if "logo" is not null, else show title
 	// Set logo file name using logo.* pattern like "logo.png" to not track it by git 
-	logo                 : 'images/logo.example.png',
-	title                : 'edumeet',
+	logo                 : 'images/logo.svg',
+	title                : 'iorestoacasa.work',
 	// Service & Support URL
 	// if not set then not displayed on the about modals
-	supportUrl           : 'https://support.example.com',
+	supportUrl           : 'https://iorestoacasa.work/',
 	// Privacy and dataprotection URL or path
 	// by default privacy/privacy.html
 	// that is a placeholder for your policies
