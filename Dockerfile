@@ -3,7 +3,7 @@ FROM node:10-slim
 # Args
 ARG REPO=befair
 ARG EDUMEET=edumeet
-ARG BRANCH=master
+ARG BRANCH=iorestoacasa
 
 ARG BASEDIR=/opt
 ARG NODE_ENV=production
