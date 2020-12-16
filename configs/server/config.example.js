@@ -319,6 +319,16 @@ module.exports =
 			peer.email = userinfo.email;
 		}
 	},
+
+  // localUserMapping will be used even if users is not authenticated
+  // It can be used be login is disabled to grant permissions
+  localUserMapping      : async ({ peer, room, roomId }) =>
+  {
+    // The first user to enter a new room is MODERATOR
+		if (room && room.getJoinedPeers().length == 0)
+      peer.addRole(userRoles.MODERATOR);
+	},
+
 	// All users have the role "NORMAL" by default. Other roles need to be
 	// added in the "userMapping" function. The following accesses and
 	// permissions are arrays of roles. Roles can be changed in userRoles.js
