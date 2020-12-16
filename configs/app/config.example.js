@@ -38,11 +38,11 @@ var config =
 
 	// If true, will show media control buttons in separate
 	// control bar, not in the ME container.
-	buttonControlBar     : false,
+	buttonControlBar     : true,
 
 	// If false, will push videos away to make room for side
 	// drawer. If true, will overlay side drawer over videos
-	drawerOverlayed      : true,
+	drawerOverlayed      : false,
 
 	// Max number of participant that will be visible as speaker
 	lastN                : 4,
@@ -61,12 +61,12 @@ var config =
 	hiddenSettings: {
 		videoResolution   : false,
 		lastN             : false,
-		aspectRatio       : false,
+		aspectRatio       : true,
 		advancedAudio     : false,
-		mirrorOwnVideo    : false,
-		permanentTopBar   : false,
-		hideMediaCtrl     : false,
-		separateMediaCtrl : false,
+		mirrorOwnVideo    : true,
+		permanentTopBar   : true,
+		hideMediaCtrl     : true,
+		separateMediaCtrl : true,
 		drawerOverContent : false,
 		showNotifications : false,
 		advancedTab       : false,
